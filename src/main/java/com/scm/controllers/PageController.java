@@ -1,5 +1,7 @@
 package com.scm.controllers;
 
+import com.scm.entities.Providers;
+import com.scm.mapper.UserFormMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,9 @@ public class PageController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserFormMapper userFormMapper;
 
     @GetMapping("/")
     public String index() {
@@ -114,13 +119,8 @@ public class PageController {
         // .profilePic(
         // "https://www.learncodewithdurgesh.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdurgesh_sir.35c6cb78.webp&w=1920&q=75")
         // .build();
-
-        User user = new User();
-        user.setName(userForm.getName());
-        user.setEmail(userForm.getEmail());
-        user.setPassword(userForm.getPassword());
-        user.setAbout(userForm.getAbout());
-        user.setPhoneNumber(userForm.getPhoneNumber());
+        User user = userFormMapper.userFormToUser(userForm);
+        user.setProvider(Providers.SELF);
         user.setEnabled(false);
         user.setProfilePic(
                 "https://www.learncodewithdurgesh.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdurgesh_sir.35c6cb78.webp&w=1920&q=75");
