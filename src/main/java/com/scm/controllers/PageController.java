@@ -126,7 +126,6 @@ public class PageController {
                 "https://www.learncodewithdurgesh.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdurgesh_sir.35c6cb78.webp&w=1920&q=75");
 
         User savedUser = userService.saveUser(user);
-
         System.out.println("user saved :");
 
         // message = "Registration Successful"
