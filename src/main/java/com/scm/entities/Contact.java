@@ -4,17 +4,14 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.scm.helpers.Helper;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Entity
 @Getter
@@ -44,5 +41,27 @@ public class Contact {
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<SocialLink> links = new ArrayList<>();
+
+    private Date modifiedDate;
+
+    private String modifiedBy;
+
+    private Date createdDate;
+
+    private String createdBy;
+
+    @PreUpdate
+    @PrePersist
+    public void updateTimeStamps()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        this.modifiedDate = new Date();
+        this.modifiedBy = username;
+        if(this.createdDate == null) {
+            this.createdDate = new Date();
+            this.createdBy = username;
+        }
+    }
 
 }
