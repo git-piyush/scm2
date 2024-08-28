@@ -27,20 +27,22 @@ public class ImageSaveHandler {
 
     public String saveFile(
             @Nonnull MultipartFile sourceFile,
-            @Nonnull Contact contact
+            @Nonnull Contact contact,
+            @Nonnull String filename
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = Helper.getEmailOfLoggedInUser(authentication);
 
         String[] userEmail = contact.getEmail().split("@");
         final String fileUploadSubPath = username;
-        return uploadFile(sourceFile, fileUploadSubPath,contact.getId());
+        return uploadFile(sourceFile, fileUploadSubPath,contact.getId(), filename);
     }
 
     private String uploadFile(
             @Nonnull MultipartFile sourceFile,
             @Nonnull String fileUploadSubPath,
-            @Nonnull String contactId
+            @Nonnull String contactId,
+            @Nonnull String filename
     ) {
         final String finalUploadPath = fileUploadPath + separator + fileUploadSubPath;
         File targetFolder = new File(finalUploadPath);
@@ -52,8 +54,8 @@ public class ImageSaveHandler {
             }
         }
         final String fileExtension = getFileExtension(sourceFile.getOriginalFilename());
-        String targetFilePath = finalUploadPath + separator + contactId + "." + fileExtension;
-        String accessPath = fileAccessPath+"/"+fileUploadSubPath+"/"+contactId+"."+fileExtension;
+        String targetFilePath = finalUploadPath + separator + filename + "." + fileExtension;
+        String accessPath = fileAccessPath+"/"+fileUploadSubPath+"/"+filename+"."+fileExtension;
 
         Path targetPath = Paths.get(targetFilePath);
         try {

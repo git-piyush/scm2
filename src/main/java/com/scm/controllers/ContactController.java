@@ -1,8 +1,12 @@
 package com.scm.controllers;
 
 import java.util.*;
+
+import com.scm.helpers.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,10 +23,6 @@ import com.scm.entities.Contact;
 import com.scm.entities.User;
 import com.scm.forms.ContactForm;
 import com.scm.forms.ContactSearchForm;
-import com.scm.helpers.AppConstants;
-import com.scm.helpers.Helper;
-import com.scm.helpers.Message;
-import com.scm.helpers.MessageType;
 import com.scm.services.ContactService;
 import com.scm.services.ImageService;
 import com.scm.services.UserService;
@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/user/contacts")
 public class ContactController {
 
-    private Logger logger = org.slf4j.LoggerFactory.getLogger(ContactController.class);
+    private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
     @Autowired
     private ContactService contactService;
@@ -44,6 +44,12 @@ public class ContactController {
 
     @Autowired
     private UserService userService;
+
+    @Value("${application.file.uploads.in.cloud}")
+    private boolean cloudStorage;
+
+    @Autowired
+    private ImageSaveHandler imageSaveHandler;
 
     @RequestMapping("/add")
     // add contact page: handler
@@ -95,11 +101,18 @@ public class ContactController {
         contact.setWebsiteLink(contactForm.getWebsiteLink());
 
         if (contactForm.getContactImage() != null && !contactForm.getContactImage().isEmpty()) {
-            String filename = UUID.randomUUID().toString();
-            String fileURL = imageService.uploadImage(contactForm.getContactImage(), filename);
-            contact.setPicture(fileURL);
-            contact.setCloudinaryImagePublicId(filename);
 
+            if(cloudStorage){
+                String filename = UUID.randomUUID().toString();
+                String fileURL = imageService.uploadImage(contactForm.getContactImage(), filename);
+                contact.setPicture(fileURL);
+                contact.setCloudinaryImagePublicId(filename);
+            }else{
+                String filename = UUID.randomUUID().toString();
+                String fileURL = imageSaveHandler.saveFile(contactForm.getContactImage(),contact,filename);
+                contact.setPicture(fileURL);
+                contact.setCloudinaryImagePublicId(filename);
+            }
         }
         contactService.save(contact);
         System.out.println(contactForm);
