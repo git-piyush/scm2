@@ -12,42 +12,7 @@ spring:
     user:
       name: admin
       password: admin
-    oauth2:
-      client:
-        registration:
-          google:
-            client-name: google
-            client-id: 729167685350-5rcmhkn6uclmjnuja2frn2i9jvcprf3g.apps.googleusercontent.com
-            client-secret: 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
-            scope: email,profile
-          github:
-            client-name: github
-            client-id: Ov23liwKHIOEE8q4oTQw
-            client-secret: 490aeb4f4d362bb505204306cb48ef7503603591
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-server:
-  port: 8081
-application:
-  file:
-    uploads:
-      photos-output-path: ./src/main/resources/static/images
-      photos-access-path: /images
-
-cloudinary:
-  cloud:
-    name: dqkvjft06
-  api:
-    key: 135533462222336
-    secret: 9XQsNoum-VaiWvev-8MaoCVwuHA
 
 #emai configuration
 
