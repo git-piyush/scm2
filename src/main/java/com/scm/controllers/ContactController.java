@@ -3,7 +3,9 @@ package com.scm.controllers;
 import java.io.IOException;
 import java.util.*;
 
+import com.scm.forms.ComposeMailForm;
 import com.scm.helpers.*;
+import com.scm.services.EmailService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.scm.entities.Contact;
 import com.scm.entities.User;
@@ -48,6 +45,9 @@ public class ContactController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Value("${application.file.uploads.in.cloud}")
     private boolean cloudStorage;
@@ -244,6 +244,41 @@ public class ContactController {
         model.addAttribute("contactId", contactId);
 
         return "user/update_contact_view";
+    }
+
+    // update contact form view
+    @GetMapping("/mailform/{contactId}")
+    public String composeMailForm(
+            @PathVariable("contactId") String contactId,
+            Model model) {
+
+        ComposeMailForm composeForm = new ComposeMailForm();
+        composeForm.setEmail("kmrpiyush95@gmail.com");
+        model.addAttribute("composeForm", composeForm);
+        return "user/composemail";
+    }
+
+    // update contact form view
+    @RequestMapping(value = "/sendmail/{contactId}", method = RequestMethod.POST)
+    public String sendmail(@Valid @ModelAttribute ComposeMailForm composeMailForm,
+            @PathVariable("contactId") String contactId,BindingResult bindingResult, HttpSession session) {
+
+
+        try {
+            emailService.sendEmail(composeMailForm.getEmail(), composeMailForm.getSubject(),
+                    composeMailForm.getMessage());
+            session.setAttribute("message", Message.builder()
+                    .content("Email Sent!!")
+                    .type(MessageType.green)
+                    .build());
+        }catch (Exception e){
+            session.setAttribute("message", Message.builder()
+                    .content("Exception in email service!!")
+                    .type(MessageType.green)
+                    .build());
+        }
+
+        return "redirect:/user/contacts/mailform/" + contactId;
     }
 
     @RequestMapping(value = "/update/{contactId}", method = RequestMethod.POST)
