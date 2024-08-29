@@ -1,13 +1,17 @@
 package com.scm.controllers;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.scm.helpers.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +51,9 @@ public class ContactController {
 
     @Value("${application.file.uploads.in.cloud}")
     private boolean cloudStorage;
+
+    @Autowired
+    private ExcelExportHandler excelExportHandler;
 
     @Autowired
     private ImageSaveHandler imageSaveHandler;
@@ -281,6 +288,17 @@ public class ContactController {
         model.addAttribute("message", Message.builder().content("Contact Updated !!").type(MessageType.green).build());
 
         return "redirect:/user/contacts/view/" + contactId;
+    }
+
+    @GetMapping("/export-contact")
+    public ResponseEntity exportContact(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Contact_Info.xlsx";
+        response.setHeader(headerKey, headerValue);
+        excelExportHandler.exportDataToExcel(response);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
