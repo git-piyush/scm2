@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Transactional
     @Override
     public User saveUser(User user) {
         // user id : have to generate
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
         user.setEmailToken(emailToken);
         User savedUser = userRepo.save(user);
         String emailLink = Helper.getLinkForEmailVerificatiton(emailToken);
-       // emailService.sendEmail(savedUser.getEmail(), "Verify Account : Smart  Contact Manager", emailLink);
+        emailService.sendEmail("kmrpiyush95@gmail.com", "Verify Account : Smart  Contact Manager", emailLink);
         return savedUser;
 
     }

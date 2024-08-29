@@ -119,22 +119,29 @@ public class PageController {
         // .profilePic(
         // "https://www.learncodewithdurgesh.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdurgesh_sir.35c6cb78.webp&w=1920&q=75")
         // .build();
-        User user = userFormMapper.userFormToUser(userForm);
-        user.setProvider(Providers.SELF);
-        user.setEnabled(false);
-        user.setProfilePic(
-                "https://www.learncodewithdurgesh.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdurgesh_sir.35c6cb78.webp&w=1920&q=75");
+        boolean userExist = userService.isUserExistByEmail(userForm.getEmail());
 
-        User savedUser = userService.saveUser(user);
-        System.out.println("user saved :");
+        if(userExist){
+            Message message = Message.builder().content("User Already Registered").type(MessageType.green).build();
+            session.setAttribute("message", message);
+        }else{
+            User user = userFormMapper.userFormToUser(userForm);
+            user.setProvider(Providers.SELF);
+            user.setEnabled(false);
+            user.setProfilePic(
+                    "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?size=626&ext=jpg");
 
-        // message = "Registration Successful"
+            User savedUser = userService.saveUser(user);
+            System.out.println("user saved :");
 
-        // add the message:
+            // message = "Registration Successful"
 
-        Message message = Message.builder().content("Registration Successful").type(MessageType.green).build();
+            // add the message:
 
-        session.setAttribute("message", message);
+            Message message = Message.builder().content("Registration Successful").type(MessageType.green).build();
+
+            session.setAttribute("message", message);
+        }
 
         // redirectto login page
         return "redirect:/register";

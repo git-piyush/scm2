@@ -8,6 +8,7 @@ import lombok.Setter;
 public class ContactSearchForm {
 
     private String field;
+
     private String value;
 
 }

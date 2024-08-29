@@ -19,7 +19,7 @@ class ApplicationTests {
 	@Test
 	void sendEmailTest() {
 		service.sendEmail(
-				"batchlcwd@gmail.com",
+				"kmrpiyush95@gmail.com",
 				"Just managing the emails",
 				"this is scm project working on email service");
 	}
