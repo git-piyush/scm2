@@ -6,6 +6,7 @@ import java.util.*;
 import com.scm.forms.ComposeMailForm;
 import com.scm.helpers.*;
 import com.scm.services.EmailService;
+import com.scm.sms.SMSService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,9 @@ public class ContactController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private SMSService smsService;
 
     @Value("${application.file.uploads.in.cloud}")
     private boolean cloudStorage;
@@ -121,8 +125,7 @@ public class ContactController {
                 contact.setCloudinaryImagePublicId(filename);
             }
         }
-        contactService.save(contact);
-        System.out.println(contactForm);
+       Contact con = contactService.save(contact);
 
         // 3 set the contact picture url
 
@@ -133,7 +136,8 @@ public class ContactController {
                         .content("You have successfully added a new contact")
                         .type(MessageType.green)
                         .build());
-
+        String message = con.getName()+" added in you contact.";
+        //smsService.sendSMS("+919686722968",message);
         return "redirect:/user/contacts/add";
 
     }
