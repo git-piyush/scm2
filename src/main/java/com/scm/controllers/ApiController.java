@@ -1,7 +1,9 @@
 package com.scm.controllers;
 
+import com.scm.employee.EmployeeClient;
 import com.scm.helpers.ExcelExportHandler;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,12 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ApiController {
 
     // get contact
+    @Autowired
+    private final EmployeeClient empClient;
 
     @Autowired
     private ContactService contactService;
@@ -41,6 +46,11 @@ public class ApiController {
         excelExportHandler.exportDataToExcel(response);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/hello")
+    public String testController(){
+        return empClient.helloWorld();
     }
 
 }
