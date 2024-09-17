@@ -160,6 +160,7 @@ public class ContactController {
         Page<Contact> pageContact = contactService.getByUser(user, page, size, sortBy, direction);
 
         model.addAttribute("pageContact", pageContact);
+        model.addAttribute("totCon", pageContact.getTotalElements());
         model.addAttribute("pageSize", AppConstants.PAGE_SIZE);
 
         model.addAttribute("contactSearchForm", new ContactSearchForm());
@@ -192,6 +193,9 @@ public class ContactController {
             pageContact = contactService.searchByEmail(contactSearchForm.getValue(), size, page, sortBy, direction,
                     user);
         } else if (contactSearchForm.getField().equalsIgnoreCase("phone")) {
+            pageContact = contactService.searchByPhoneNumber(contactSearchForm.getValue(), size, page, sortBy,
+                    direction, user);
+        }else{
             pageContact = contactService.searchByPhoneNumber(contactSearchForm.getValue(), size, page, sortBy,
                     direction, user);
         }
@@ -256,8 +260,10 @@ public class ContactController {
             @PathVariable("contactId") String contactId,
             Model model) {
 
+        Contact contact = contactService.getById(contactId);
+
         ComposeMailForm composeForm = new ComposeMailForm();
-        composeForm.setEmail("kmrpiyush95@gmail.com");
+        composeForm.setEmail(contact.getEmail().toString());
         model.addAttribute("composeForm", composeForm);
         return "user/composemail";
     }

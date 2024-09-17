@@ -1,12 +1,16 @@
 package com.scm.services.impl;
 
+import jakarta.mail.internet.InternetAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.scm.services.EmailService;
+
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -18,13 +22,18 @@ public class EmailServiceImpl implements EmailService {
     private String domainName;
 
     @Override
-    public void sendEmail(String to, String subject, String body) {
+    public void sendEmail(String to, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
-        message.setFrom(domainName);
-        eMailSender.send(message);
+        try {
+            message.setFrom(String.valueOf(new InternetAddress("kmrpiyush95@gmail.com", "Piyush Kumar")));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        //message.setFrom("kmrpiyush95@gmail.com");
+            eMailSender.send(message);
     }
 //
 //    @Override
